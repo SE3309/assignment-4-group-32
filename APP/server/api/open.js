@@ -25,6 +25,7 @@ router.get('/products', (req, res) => {
     })
     
 })
+//get all necklaces
 router.get("/api/open/necklaces", async (req, res) => {
     try {
         const necklaces = await necklaceController.getNecklaces();
@@ -34,6 +35,7 @@ router.get("/api/open/necklaces", async (req, res) => {
     }
 });
 
+//get product by product id
 router.get("/api/open/products/:id", async (req, res) => {
     const { id } = req.params;
     
@@ -49,7 +51,7 @@ router.get("/api/open/products/:id", async (req, res) => {
     }
 });
 
-
+//get all products
 router.get("/api/open/products", async (req, res) => {
     try {
         const products = await productController.getProducts();
@@ -59,6 +61,7 @@ router.get("/api/open/products", async (req, res) => {
     }
 });
 
+//get all rings 
 router.get("/api/open/rings", async (req, res) => {
     try {
         const rings = await ringController.getRings();
@@ -69,7 +72,7 @@ router.get("/api/open/rings", async (req, res) => {
 });
 
 
-
+//create a new user
 router.post("/api/open/user", async (req, res) => {
     const customer = req.body; // Assuming the user data is in the body
     try {
@@ -80,6 +83,7 @@ router.post("/api/open/user", async (req, res) => {
     }
 });
 
+//get all metals
 router.get("/api/open/metals", async (req, res) => {
     try {
         const metals = await metalController.getMetals();
@@ -89,6 +93,7 @@ router.get("/api/open/metals", async (req, res) => {
     }
 });
 
+//get all links
 router.get("/api/open/links", async (req, res) => {
     try {
         const links = await linkController.getLink();
@@ -98,6 +103,7 @@ router.get("/api/open/links", async (req, res) => {
     }
 });
 
+//get all gems
 router.get("/api/open/gems", async (req, res) => {
     try {
         const gems = await gemController.getAllGems();
@@ -107,6 +113,7 @@ router.get("/api/open/gems", async (req, res) => {
     }
 });
 
+//get gems by id 
 router.get("/api/open/gems/:id", async (req, res) => {
     const { id } = req.params;
 

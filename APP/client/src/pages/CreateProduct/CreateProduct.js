@@ -19,6 +19,39 @@ const CreateProduct = () => {
     setOptions();
   }, []);
 
+  useEffect(()=>{
+    fetch('/api/open/metals')
+      .then((response) => response.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setMetals(data); // Store the fetched countries in state
+        }
+      })
+      .catch((error) => console.error('Error fetching metals:', error));
+  },[metals]);
+
+  useEffect(()=>{
+    fetch('/api/open/gems')
+      .then((response) => response.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setGems(data); // Store the fetched countries in state
+        }
+      })
+      .catch((error) => console.error('Error fetching gems:', error));
+  },[gems]);
+
+  useEffect(()=>{
+    fetch('/api/open/links')
+      .then((response) => response.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setLinks(data); // Store the fetched countries in state
+        }
+      })
+      .catch((error) => console.error('Error fetching gems:', error));
+  },[links]);
+
   return (
     <div className='page-wrap'>
       <div className='create-page-wrapper'>
@@ -36,14 +69,24 @@ const CreateProduct = () => {
           <label>
             Gem:
             <select className='drop-down' onChange={e => setGemId(e.target.value)}>
-              {gems}
+                <option value="">Select a Gem</option>
+                      {gems.map((gem) => (
+                        <option key={gem.id} value={gem.name}>
+                          {gem.name}
+                        </option>
+                      ))}
             </select>
           </label>
 
           <label>
             Metal:
             <select className='drop-down' onChange={e => setMetalId(e.target.value)}>
-              {metals}
+              <option value="">Select a Metal</option>
+                {metals.map((metal) => (
+                          <option key={metal.id} value={metal.id}>
+                            {metal.name}
+                          </option>
+                        ))}
             </select>
           </label>
         </div>
@@ -54,8 +97,13 @@ const CreateProduct = () => {
 
           <label>
             Link Type:
-            <select className='drop-down' onChange={e => setMetalId(e.target.value)}>
-              {links}
+            <select className='drop-down' onChange={e => setLinkId(e.target.value)}>
+                  <option value="">Select a Link</option>
+                      {links.map((link) => (
+                                <option key={link.id} value={link.id}>
+                                  {link.name}
+                                </option>
+                              ))}
             </select>
           </label>
 
@@ -109,20 +157,82 @@ const CreateProduct = () => {
   function createNecklaceOrder() {
     if(!localStorage.getItem("username")) {
       //Dont allow creation
-    }
-    else {
-      //Do API Stuff
-    }
+      alert("Please log in to create an order.");
+      return;
+  } else {
+      // Do API Stuff to create a necklace order
+      
+
+      // Call the API to create the order (example using POST method)
+      fetch("/api/secure/products", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+             name: neckName, 
+             mass: "___",  //no way to calculate atm
+             price: "____", //no way to calculate atm
+             metalId: metalId, 
+             gemId: gemId, 
+             necklaceId: null, 
+             ringId: "___", //find way to iterate from last created??? shouldnt this be done on the backend 
+             creatorId: localStorage.getItem("userID") 
+          })
+      .then(response => response.json())
+      .then(data => {
+          if (data.success) {
+              alert("Necklace order created successfully!");
+          } else {
+              alert("Failed to create necklace order.");
+          }
+      })
+      .catch(error => {
+          console.error("Error creating necklace order:", error);
+          alert("Error creating necklace order.");
+      })});
+  }
   }
 
   function createRingOrder() {
     if(!localStorage.getItem("username")) {
-      //Dont allow creation
-    }
-    else {
-      //Do API Stuff
+        //Dont allow creation
+        alert("Please log in to create an order.");
+        return;
+    } else {
+        // Do API Stuff to create a necklace order
+
+        // Call the API to create the order (example using POST method)
+        fetch("/api/secure/products", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+               name: ringName, 
+               mass: "___",  //volume*density of metal
+               price: "____", //mass*$pg metal + gem
+               metalId: metalId, 
+               gemId: gemId, 
+               necklaceId: null, 
+               ringId: "___", //find way to iterate from last created??? shouldnt this be done on the backend is there like an autoiterate or something in sql?
+               creatorId: localStorage.getItem("userID") 
+            })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Necklace order created successfully!");
+            } else {
+                alert("Failed to create necklace order.");
+            }
+        })
+        .catch(error => {
+            console.error("Error creating necklace order:", error);
+            alert("Error creating necklace order.");
+        })});
     }
   }
 }
-
-export default CreateProduct
+    
+  
+export default CreateProduct;

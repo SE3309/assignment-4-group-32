@@ -10,6 +10,7 @@ const productController = require('../database/dbProduct.js');
 const ringController = require('../database/dbRing.js');
 const userController = require('../database/dbUser.js');
 
+//get user by id
 router.get("/api/secure/user/:id", async (req, res) => {
     const userId = req.params.id;
     try {
@@ -21,7 +22,7 @@ router.get("/api/secure/user/:id", async (req, res) => {
 });
 
 
-
+//create a new product
 router.post("/api/secure/products", async (req, res) => {
     const { name, mass, price, metalId, gemId, necklaceId, ringId, creatorId } = req.body;
     const newProduct = { name, mass, price, metalId, gemId, necklaceId, ringId, creatorId };
@@ -34,6 +35,7 @@ router.post("/api/secure/products", async (req, res) => {
     }
 });
 
+//update an exisiting product
 router.put("/api/secure/products/:id", async (req, res) => {
     const { id } = req.params;
     const { name, mass, price, metalId, gemId, necklaceId, ringId, creatorId } = req.body;
@@ -58,6 +60,7 @@ router.put("/api/secure/products/:id", async (req, res) => {
     }
 });
 
+//create a new order
 router.post("/api/secure/orders", async (req, res) => {
     const { customerId, startDate, totalPrice, totalMass, status, products } = req.body;
     const newOrder = { customerId, startDate, totalPrice, totalMass, status, products };
@@ -70,6 +73,7 @@ router.post("/api/secure/orders", async (req, res) => {
     }
 });
 
+//edit an existing order by id
 router.put("/api/secure/orders/:id", async (req, res) => {
     const { id } = req.params;
     const { customerId, startDate, totalPrice, totalMass, status, products } = req.body;
