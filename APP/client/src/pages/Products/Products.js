@@ -9,9 +9,37 @@ const Products = () => {
   const [isRing, setRing] = useState(true);
   const [productPanels, setProductPanels] = useState([]);
 
+  const [metals, setMetals] = useState([]);
+  const [gems, setGems] = useState([]);
+
+
   useEffect(() => {
     setProducts();
   }, []);
+
+  useEffect(()=>{
+    fetch('/api/open/metals')
+      .then((response) => response.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setMetals(data); // Store the fetched countries in state
+        }
+      })
+      .catch((error) => console.error('Error fetching metals:', error));
+  },[metals]);
+
+  useEffect(()=>{
+    fetch('/api/open/gems')
+      .then((response) => response.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setGems(data); // Store the fetched countries in state
+        }
+      })
+      .catch((error) => console.error('Error fetching gems:', error));
+  },[gems]);
+
+
 
   return (
     <div className='page-wrap'>
@@ -27,6 +55,11 @@ const Products = () => {
             Material:
             <select name="materials" id="materials" className='drop-down'>
               <option value="default">All</option>
+                    {metals.map((metal) => (
+                        <option key={metal.id} value={metal.name}>
+                          {metal.name}
+                        </option>
+                      ))}
             </select>
           </label>
 
@@ -34,6 +67,11 @@ const Products = () => {
             Gem:
             <select name="gems" id="gems" className='drop-down'>
               <option value="default">All</option>
+                      {gems.map((gem) => (
+                        <option key={gem.id} value={gem.name}>
+                          {gem.name}
+                        </option>
+                      ))}
               <option value="none">None</option>
             </select>
           </label>
