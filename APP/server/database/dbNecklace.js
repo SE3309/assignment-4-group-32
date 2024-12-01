@@ -1,11 +1,15 @@
 const db = require('./db');
 
 async function getNecklaces() {
-    const client = db.createDb();
+    const client = await db.createDb();
     try {
         await client.connect();
-        const res = await client.query('SELECT * FROM family_jewels.necklace');
-        return res.rows;
+        const res = await client.query(`
+            SELECT *
+            FROM family_jewels.necklace`
+        );
+
+        return res[0];
     } catch (error) {
         console.error('Error getting necklaces:', error.message);
         throw error;
@@ -15,16 +19,23 @@ async function getNecklaces() {
 }
 
 async function addNecklace(necklace) {
-    const client = db.createDb();
+    const client = await db.createDb();
+    
+    console.log(necklace.linkId)
+
     try {
         await client.connect();
-        await client.query(
+        const [result] = await client.query(
             `INSERT INTO family_jewels.necklace
              (linkId, name, linkAmount, size, totalVolume)
              VALUES (?, ?, ?, ?, ?) `,
             [necklace.linkId, necklace.name, necklace.linkAmount, necklace.size, necklace.totalVolume]
         );
         console.log('Necklace added successfully.');
+
+        const neckId = result.insertId;
+        //console.log(ringId);
+        return neckId;
     } catch (error) {
         console.error('Error adding necklace:', error.message);
         throw error;
@@ -34,7 +45,7 @@ async function addNecklace(necklace) {
 }
 
 async function updateNecklace(necklace) {
-    const client = db.createDb();
+    const client = await db.createDb();
     try {
         await client.connect();
         await client.query(
@@ -53,7 +64,7 @@ async function updateNecklace(necklace) {
 }
 
 async function deleteNecklace(necklaceId) {
-    const client = db.createDb();
+    const client = await db.createDb();
     try {
         await client.connect();
         await client.query(

@@ -1,12 +1,68 @@
 const db = require('./db.js');
-const {rows} = require("express/lib/response");
 
 async function getOrders() {
-    const client = db.createDb();
+    const client = await db.createDb();
     try {
         await client.connect();
-        const res = await client.query('SELECT * FROM family_jewels.customer_order');
-        return res.rows;
+
+        const query = `
+            SELECT
+                co.*,
+                c.address,
+                c.emailAddress,
+                c.phoneNumber,
+                u.firstName,
+                u.lastName
+            FROM
+                family_jewels.customer_order co
+                    JOIN
+                family_jewels.customer c
+                ON
+                    co.customerId = c.customerId
+                    JOIN
+                family_jewels.user u
+                ON
+                    c.customerId = u.userId
+        `;
+
+        const res = await client.query(query);
+        return res[0]; // Return all rows as an array
+    } catch (error) {
+        console.error('Error getting orders:', error.message);
+        throw error;
+    } finally {
+        await client.end();
+    }
+}
+
+async function getUserOrders(id) {
+    const client = await db.createDb();
+    try {
+        await client.connect();
+
+        const query = `
+            SELECT
+                co.*,
+                c.address,
+                c.emailAddress,
+                c.phoneNumber,
+                u.firstName,
+                u.lastName
+            FROM
+                family_jewels.customer_order co
+                    JOIN
+                family_jewels.customer c
+                ON
+                    co.customerId = c.customerId
+                    JOIN
+                family_jewels.user u
+                ON
+                    c.customerId = u.userId
+            WHERE co.customerId = ${id}
+        `;
+
+        const res = await client.query(query);
+        return res[0]; // Return all rows as an array
     } catch (error) {
         console.error('Error getting orders:', error.message);
         throw error;
@@ -17,7 +73,7 @@ async function getOrders() {
 
 //add order
 async function addOrder(order) {
-    const client = db.createDb();
+    const client = await db.createDb();
     try {
         await client.connect();
         await client.beginTransaction();
@@ -53,7 +109,7 @@ async function addOrder(order) {
 
 //update order
 async function updateOrder(order) {
-    const client = db.createDb();
+    const client = await db.createDb();
     try {
         await client.connect();
         await client.beginTransaction();
@@ -86,7 +142,7 @@ async function updateOrder(order) {
 
 //delete order
 async function deleteOrder(orderId) {
-    const client = db.createDb();
+    const client = await db.createDb();
     try {
         await client.connect();
         await client.query('DELETE FROM family_jewels.customer_order WHERE orderId = ?', [orderId]);
@@ -104,5 +160,6 @@ module.exports = {
     getOrders,
     addOrder,
     updateOrder,
-    deleteOrder
+    deleteOrder,
+    getUserOrders
 }

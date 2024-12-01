@@ -2,7 +2,7 @@ const db = require('./db.js'); // Assuming this returns a pool or client instanc
 
 // Get all products
 async function getProducts() {
-    const client = db.createDb(); // Create a connection or pool instance
+const client = await db.createDb();
 
     try {
         const [results] = await client.query('SELECT * FROM family_jewels.product');
@@ -17,7 +17,7 @@ async function getProducts() {
 
 // Get a product by ID
 async function getProduct(id) {
-    const client = db.createDb();
+    const client = await db.createDb();
 
     try {
         const [results] = await client.query('SELECT * FROM family_jewels.product WHERE productId = ?', [id]);
@@ -30,9 +30,86 @@ async function getProduct(id) {
     }
 }
 
+// Get a ring product details by ID
+async function getProductDetailsRing(id) {
+    const client = await db.createDb();
+
+    try {
+        const [results] = await client.query(`SELECT Product.name as productName, Product.mass, Product.price, Product.type, Ring.name, Ring.size, Ring.volume, Metal.name, Metal.purity, Metal.type, User.firstName, User.lastName
+                                                FROM Product
+                                                JOIN Ring ON Product.ringId=Ring.ringId
+                                                JOIN Metal ON Product.metalId=Metal.metalId
+                                                JOIN User ON Product.creatorId=User.userId
+                                                WHERE Product.productId = ${id}`);
+        return results[0]; // Return the first product found
+    } catch (error) {
+        console.error('Error fetching product by ID:', error.message);
+        throw error;
+    } finally {
+        await client.end();
+    }
+}
+
+
+async function getProductDetailNecklace(id) {
+    const client = await db.createDb();
+
+    try {
+        const [results] = await client.query(`
+            SELECT Product.name,
+                   Product.mass,
+                   Product.price,
+                   Product.type,
+                   necklace.name        AS necklaceName,
+                   necklace.size        AS necklaceSize,
+                   necklace.totalVolume AS necklaceVolume,
+                   Link.name            AS linkName,
+                   link.size            AS linkSize,
+                   g.name               AS gemName,
+                   g.quality            AS gemQuality,
+                   g.carat              AS gemCarat,
+                   g.shape              AS gemShape
+            FROM Product
+                     JOIN Necklace ON Product.necklaceId = Necklace.necklaceId
+                     JOIN Link ON Necklace.linkId = Link.linkId
+                     JOIN Metal ON Product.metalId = Metal.metalId
+                     LEFT JOIN family_jewels.gem g ON Product.gemId = g.gemId
+            WHERE Product.productId = ?
+        `, [id]); // Use parameterized query to prevent SQL injection
+
+        return results[0]; // Return the first product found
+    } catch (error) {
+        console.error('Error fetching product by ID:', error.message);
+        throw error;
+    } finally {
+        await client.end();
+    }
+}
+
+
+
+// Get a ring product details by ID
+async function getProductDetailsNecklace(id) {
+    const client = await db.createDb();
+    console.log('hi');
+    const tempId = 6;
+    try {
+        const [results] = await client.query(`SELECT Product.name, Product.mass, Product.price, Product.type, Ring.name, Ring.size, Ring.volume 
+                                                FROM Product
+                                                JOIN Ring ON Product.ringId=Ring.ringId
+                                                WHERE Product.productId = ${tempId}`);
+        return results[0]; // Return the first product found
+    } catch (error) {
+        console.error('Error fetching product by ID:', error.message);
+        throw error;
+    } finally {
+        await client.end();
+    }
+}
+
 // Add a new product
 async function addProduct(product) {
-    const client = db.createDb();
+    const client = await db.createDb();
 
     try {
         await client.query(
@@ -40,7 +117,7 @@ async function addProduct(product) {
                  (name, mass, price, metalId, gemId, necklaceId, ringId, creatorId)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
             [product.name, product.mass, product.price, product.metalId, product.gemId, product.necklaceId, product.ringId, product.creatorId]
-        );
+        ); //creatorID is the fucking userID
         console.log('Product added successfully.');
     } catch (error) {
         console.error('Error adding product:', error.message);
@@ -52,7 +129,7 @@ async function addProduct(product) {
 
 // Update a product
 async function updateProduct(product) {
-    const client = db.createDb();
+    const client = await db.createDb();
 
     try {
         await client.query(
@@ -88,7 +165,7 @@ async function updateProduct(product) {
 
 // Delete a product by ID
 async function deleteProduct(id) {
-    const client = db.createDb();
+    const client = await db.createDb();
 
     try {
         await client.query('DELETE FROM family_jewels.product WHERE productId = ?', [id]);
@@ -101,4 +178,4 @@ async function deleteProduct(id) {
     }
 }
 
-module.exports = {getProducts, getProduct, addProduct, updateProduct, deleteProduct};
+module.exports = {getProducts, getProduct, addProduct, updateProduct, deleteProduct, getProductDetailsRing, getProductDetailsNecklace};

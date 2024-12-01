@@ -2,8 +2,37 @@ import React, { useEffect, useState } from 'react'
 import { Link, useMatch, useResolvedPath } from "react-router-dom"
 import './Navbar.css'
 
-const Navbar = () => {
-    const [username, setUsername] = useState(localStorage.getItem("username"));
+function Navbar () {
+    const [username, setUsername] = useState("");
+
+    function CustomLink({ to, children, ...props }) {
+        const resolvedPath = useResolvedPath(to)
+        const isActive = useMatch({ path: resolvedPath.pathname, end: true })
+
+        return (
+            <li className={isActive ? "active" : ""}>
+                <Link to={to} {...props}>
+                    {children}
+                </Link>
+            </li>
+        )
+    }
+
+    function logout() {
+        localStorage.removeItem("user");
+        setUsername("");
+    }
+
+    useEffect(() => {
+        const user = JSON.parse(sessionStorage.getItem("user"));
+        if(user) {
+            setUsername(user.username);
+        }
+
+        console.log(user);
+
+    }, []);
+
     return (
         <nav className="nav">
             <Link to="/" className="title">
@@ -22,6 +51,7 @@ const Navbar = () => {
             }
             {username &&
             <ul>
+                <CustomLink to="/profile">View Orders</CustomLink>
                 <h4 style={{marginRight: 20}}>User: {username}</h4>
                 <button onClick={logout} className='logout-button'>Logout</button>
             </ul>
@@ -29,23 +59,9 @@ const Navbar = () => {
         </nav>
     )
 
-    function logout() {
-        localStorage.removeItem("username");
-        setUsername("");
-      }
+
 }
 
-function CustomLink({ to, children, ...props }) {
-    const resolvedPath = useResolvedPath(to)
-    const isActive = useMatch({ path: resolvedPath.pathname, end: true })
-  
-    return (
-      <li className={isActive ? "active" : ""}>
-        <Link to={to} {...props}>
-          {children}
-        </Link>
-      </li>
-    )
-  }
+
 
 export default Navbar
