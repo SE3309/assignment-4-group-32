@@ -26,6 +26,9 @@ const Cart = () => {
   )
 
   function populateCart() {
+    if(!cartItems) {
+      return;
+    }
     //Query API for product information
     return(
       <div>
