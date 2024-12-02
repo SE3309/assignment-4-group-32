@@ -93,20 +93,6 @@ router.get("/api/open/metals", async (req, res) => {
     }
 });
 
-//metal by ID
-router.get("/api/open/metalById/:metalId", async (req, res) => {
-    const metalId = req.body.metalId
-    try {
-        const metals = await metalController.getMetalById(metalId);
-        if (metals.length === 0) {
-            return res.status(404).json({ error: "Metal not found" });
-        }
-        res.status(200).json(metals[0]);
-    } catch (error) {
-        res.status(500).json({ error: "Error fetching metals" });
-    }
-});
-
 //get all links
 router.get("/api/open/links", async (req, res) => {
     try {
@@ -114,20 +100,6 @@ router.get("/api/open/links", async (req, res) => {
         res.status(200).json(links);
     } catch (error) {
         res.status(500).json({ error: "Error fetching links" });
-    }
-});
-
-//link by ID
-router.get("/api/open/linkById/:linkId", async (req, res) => {
-    const linkId = req.body.linkId
-    try {
-        const links = await metalController.getLinkById(linkId);
-        if (links.length === 0) {
-            return res.status(404).json({ error: "Link not found" });
-        }
-        res.status(200).json(links[0]);
-    } catch (error) {
-        res.status(500).json({ error: "Error fetching link" });
     }
 });
 

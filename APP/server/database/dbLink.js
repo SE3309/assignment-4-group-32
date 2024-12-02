@@ -15,21 +15,6 @@ async function getLink() {
     }
 }
 
-//get link by id
-async function getLinkById(linkId) {
-    const client = db.createDb();
-    try {
-        await client.connect();
-        const res = await client.query('SELECT * FROM family_jewels.link WHERE linkId = ?',[linkId]);
-        return res.rows;
-    } catch (error) {
-        console.error('Error getting link:', error.message);
-        throw error;
-    } finally {
-        await client.end();
-    }
-}
-
 //add link
 async function addLink(link) {
     const client = db.createDb();
@@ -87,7 +72,6 @@ async function deleteLink(linkId) {
 
 module.exports = {
     getLink,
-    getLinkById,
     addLink,
     updateLink,
     deleteLink
