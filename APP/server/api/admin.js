@@ -10,6 +10,7 @@ const productController = require('../database/dbProduct.js');
 const ringController = require('../database/dbRing.js');
 const userController = require('../database/dbUser.js');
 
+//delete order
 router.delete("/api/admin/orders/:id", async (req, res) => {
     
     const { id } = req.params;
@@ -22,7 +23,7 @@ router.delete("/api/admin/orders/:id", async (req, res) => {
     }
 });
 
-
+//get all orders
 router.get("/api/admin/orders", async (req, res) => {
     try {
         const orders = await orderController.getOrders();
@@ -31,7 +32,7 @@ router.get("/api/admin/orders", async (req, res) => {
         res.status(500).json({ error: "Error fetching orders" });
     }
 });
-
+//edit user by id
 router.put("/api/admin/user/:id", async (req, res) => {
     const userId = req.params.id;
     const user = { ...req.body, userid: userId }; // Include the ID in the request body
@@ -43,7 +44,7 @@ router.put("/api/admin/user/:id", async (req, res) => {
     }
 });
 
-
+//delete user by id
 router.delete("/api/admin/user/:id", async (req, res) => {
     const userId = req.params.id;
     try {
@@ -53,7 +54,7 @@ router.delete("/api/admin/user/:id", async (req, res) => {
         res.status(500).json({ error: "Error deleting user" });
     }
 });
-
+//delete ring by id
 router.delete("/api/admin/rings/:id", async (req, res) => {
     const { id } = req.params;
 
@@ -64,7 +65,7 @@ router.delete("/api/admin/rings/:id", async (req, res) => {
         res.status(500).json({ error: "Error deleting ring" });
     }
 });
-
+//delete product by id
 router.delete("/api/admin/products/:id", async (req, res) => {
     const { id } = req.params;
 
@@ -75,7 +76,7 @@ router.delete("/api/admin/products/:id", async (req, res) => {
         res.status(500).json({ error: "Error deleting product" });
     }
 });
-
+//delete necklace by id
 router.delete("/api/admin/necklaces/:id", async (req, res) => {
     const { id } = req.params;
 
@@ -86,7 +87,7 @@ router.delete("/api/admin/necklaces/:id", async (req, res) => {
         res.status(500).json({ error: "Error deleting necklace" });
     }
 });
-
+//create metal
 router.post("/api/admin/metals", async (req, res) => {
     const { name, purity, type, costPerGram, density } = req.body;
     const newMetal = { name, purity, type, costPerGram, density };
@@ -98,7 +99,7 @@ router.post("/api/admin/metals", async (req, res) => {
         res.status(500).json({ error: "Error adding metal" });
     }
 });
-
+//edit metal
 router.put("/api/admin/metals/:id", async (req, res) => {
     const { id } = req.params;
     const { name, purity, type, costPerGram, density } = req.body;
@@ -119,7 +120,7 @@ router.put("/api/admin/metals/:id", async (req, res) => {
         res.status(500).json({ error: "Error updating metal" });
     }
 });
-
+//delete metal
 router.delete("/api/admin/metals/:id", async (req, res) => {
     const { id } = req.params;
 
@@ -130,7 +131,7 @@ router.delete("/api/admin/metals/:id", async (req, res) => {
         res.status(500).json({ error: "Error deleting metal" });
     }
 });
-
+//create link
 router.post("/api/admin/links", async (req, res) => {
     const { name, size, volume } = req.body;
     const newLink = { name, size, volume };
@@ -142,7 +143,7 @@ router.post("/api/admin/links", async (req, res) => {
         res.status(500).json({ error: "Error adding link" });
     }
 });
-
+//edit link by id
 router.put("/api/admin/links/:id", async (req, res) => {
     const { id } = req.params;
     const { name, size, volume } = req.body;
@@ -161,7 +162,7 @@ router.put("/api/admin/links/:id", async (req, res) => {
         res.status(500).json({ error: "Error updating link" });
     }
 });
-
+//delete link
 router.delete("/api/admin/links/:id", async (req, res) => {
     const { id } = req.params;
 
@@ -172,7 +173,7 @@ router.delete("/api/admin/links/:id", async (req, res) => {
         res.status(500).json({ error: "Error deleting link" });
     }
 });
-
+//create gem
 router.post("/api/admin/gems", async (req, res) => {
     const { name, quality, carat, shape, stock, price } = req.body;
     const newGem = { name, quality, carat, shape, stock, price };
@@ -184,7 +185,7 @@ router.post("/api/admin/gems", async (req, res) => {
         res.status(500).json({ error: "Error adding gem" });
     }
 });
-
+//edit gem
 router.put("/api/admin/gems/:id", async (req, res) => {
     const { id } = req.params;
     const { name, quality, carat, shape, stock, price } = req.body;
@@ -206,7 +207,7 @@ router.put("/api/admin/gems/:id", async (req, res) => {
         res.status(500).json({ error: "Error updating gem" });
     }
 });
-
+//delete gem
 router.delete("/api/admin/gems/:id", async (req, res) => {
     const { id } = req.params;
 
@@ -217,7 +218,7 @@ router.delete("/api/admin/gems/:id", async (req, res) => {
         res.status(500).json({ error: "Error deleting gem" });
     }
 });
-
+//create ring
 router.post("/api/admin/rings", async (req, res) => {
     const { name, size, volume } = req.body;
     const newRing = { name, size, volume };
@@ -230,6 +231,7 @@ router.post("/api/admin/rings", async (req, res) => {
     }
 });
 
+//edit ring by id
 router.put("/api/admin/rings/:id", async (req, res) => {
     const { id } = req.params;
     const { name, size, volume } = req.body;
@@ -243,6 +245,8 @@ router.put("/api/admin/rings/:id", async (req, res) => {
         res.status(500).json({ error: "Error updating ring" });
     }
 });
+
+//create necklace
 router.post("/api/admin/necklaces", async (req, res) => {
     const { linkId, name, linkAmount, size, totalVolume } = req.body;
     const newNecklace = { linkId, name, linkAmount, size, totalVolume };
@@ -254,7 +258,7 @@ router.post("/api/admin/necklaces", async (req, res) => {
         res.status(500).json({ error: "Error adding necklace" });
     }
 });
-
+//edit necklace by id
 router.put("/api/admin/necklaces/:id", async (req, res) => {
     const { id } = req.params;
     const { linkId, name, linkAmount, size, totalVolume } = req.body;

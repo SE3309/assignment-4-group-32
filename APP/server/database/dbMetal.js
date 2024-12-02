@@ -15,6 +15,22 @@ async function getMetals(){
     }
 }
 
+//get metal by ID 
+async function getMetalById(metalId){
+    const client = db.createDb();
+    try {
+        await client.connect();
+        
+        const res = await client.query(`SELECT * FROM family_jewels.metal WHERE metalID = ?`,[metalId]);
+        return res.rows;
+    } catch (error) {
+        console.error('Error getting metal:', error.message);
+        throw error;
+    } finally {
+        await client.end();
+    }
+}
+
 //add metal
 async function addMetal(metal){
     const client = db.createDb();
@@ -72,6 +88,7 @@ async function deleteMetal(metalId){
 
 module.exports = {
     getMetals,
+    getMetalById,
     addMetal,
     updateMetal,
     deleteMetal

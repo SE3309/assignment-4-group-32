@@ -155,43 +155,57 @@ const CreateProduct = () => {
   }
 
   function createNecklaceOrder() {
-    if(!localStorage.getItem("username")) {
-      //Dont allow creation
-      alert("Please log in to create an order.");
-      return;
-  } else {
-      // Do API Stuff to create a necklace order
-      
+      if(!localStorage.getItem("username")) {
+          //Dont allow creation
+          alert("Please log in to create an order.");
+          return;
+      } else {
+          // Do API Stuff to create a necklace order
+          fetch(`/api/open/metalById/${metalId}`)
+          .then(response=> response.json())
+          .then(async data =>{
 
-      // Call the API to create the order (example using POST method)
-      fetch("/api/secure/products", {
-          method: "POST",
-          headers: {
-              "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-             name: neckName, 
-             mass: "___",  //no way to calculate atm
-             price: "____", //no way to calculate atm
-             metalId: metalId, 
-             gemId: gemId, 
-             necklaceId: null, 
-             ringId: "___", //find way to iterate from last created??? shouldnt this be done on the backend 
-             creatorId: localStorage.getItem("userID") 
-          })
-      .then(response => response.json())
-      .then(data => {
-          if (data.success) {
-              alert("Necklace order created successfully!");
-          } else {
-              alert("Failed to create necklace order.");
-          }
-      })
-      .catch(error => {
-          console.error("Error creating necklace order:", error);
-          alert("Error creating necklace order.");
-      })});
-  }
+              const density = data.density;
+              const costPerG = data.costPerG; ///sry forgot what the actual column is called
+
+              const response = await fetch(`/api/open/linkById/:${linkId}`);
+              const data = await response.json();
+          
+              if (response.ok) {
+                  const mass = linkNum*data.volume*density; //hopefully we get link volume here
+                  const price = mass*costPerG; //hopefully
+
+                  // Call the API to create the order (example using POST method)
+                  fetch("/api/secure/products", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                      name: neckName, 
+                      mass: mass,  //#links * link vol * metal density
+                      price: price, //mass*$pg metal + gem
+                      metalId: metalId, 
+                      gemId: gemId, 
+                      necklaceId: "___", //find way to iterate from last created??? is there like an autoiterate or something in sql?
+                      ringId: null, 
+                      creatorId: localStorage.getItem("userID") 
+                    })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Necklace created successfully!");
+                    } else {
+                        alert("Failed to create Necklace.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error creating Necklace:", error);
+                    alert("Error creating Necklace.");
+                })});
+              }     
+        });
+      }
   }
 
   function createRingOrder() {
@@ -201,35 +215,46 @@ const CreateProduct = () => {
         return;
     } else {
         // Do API Stuff to create a necklace order
+        fetch(`/api/open/metalById/${metalId}`)
+        .then(response=> response.json())
+        .then(data =>{
 
-        // Call the API to create the order (example using POST method)
-        fetch("/api/secure/products", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-               name: ringName, 
-               mass: "___",  //volume*density of metal
-               price: "____", //mass*$pg metal + gem
-               metalId: metalId, 
-               gemId: gemId, 
-               necklaceId: null, 
-               ringId: "___", //find way to iterate from last created??? shouldnt this be done on the backend is there like an autoiterate or something in sql?
-               creatorId: localStorage.getItem("userID") 
-            })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert("Necklace order created successfully!");
-            } else {
-                alert("Failed to create necklace order.");
-            }
-        })
-        .catch(error => {
-            console.error("Error creating necklace order:", error);
-            alert("Error creating necklace order.");
-        })});
+            const density = data.density;
+            const costPerG = data.costPerG; ///sry forgot what the actual column is called
+
+            const mass = ringVolume*density; //hopefully
+            const price = mass*costPerG; //hopefully
+
+             // Call the API to create the order (example using POST method)
+            fetch("/api/secure/products", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json"
+              },
+              body: JSON.stringify({
+                name: ringName, 
+                mass: mass,  //volume*density of metal
+                price: price, //mass*$pg metal + gem
+                metalId: metalId, 
+                gemId: gemId, 
+                necklaceId: null, 
+                ringId: "___", //find way to iterate from last created??? is there like an autoiterate or something in sql?
+                creatorId: localStorage.getItem("userID") 
+              })
+          .then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  alert("Ring created successfully!");
+              } else {
+                  alert("Failed to create Ring.");
+              }
+          })
+          .catch(error => {
+              console.error("Error creating Ring:", error);
+              alert("Error creating Ring.");
+          })});
+
+     });
     }
   }
 }
